@@ -37,6 +37,9 @@ for boss in bosses:
     boss_df[boss] = df[df["id"] == boss].sort_values("time captured")
 print("{}: Downloaded and imported data".format(datetime.now()))
 
+#OCR Error
+boss_df['andromalius'] = boss_df['andromalius'][boss_df['andromalius']['time captured'] != 1546038899]
+
 #Need to improve this part: Make the HP list increasing only
 for i in range(10):
     for boss in boss_df:
@@ -85,8 +88,10 @@ for boss in boss_df:
     y = (boss_df[boss]["hp"].diff()[1:] / boss_df[boss]["time captured"].diff()[1:])
     if boss == 'barbatos':
         idx = (y < 500) & (y > 0) #Some bound checking
+    elif boss == 'andromalius':
+        idx = (y < 40) & (y > 0)
     else:
-        idx = (y < 30) & (y > 0)
+        idx = (y < 20) & (y > 0)
     x = x[idx][9:]
     x = pd.to_datetime(x, unit='s') + pd.Timedelta('-08:00:00') #Change time to PST time
     y = y[idx]
