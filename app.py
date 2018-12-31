@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-#from flask_caching import Cache
+from flask_caching import Cache
 
 boss_list = [
     'flauros',
@@ -59,30 +59,39 @@ dash_chart = [{'value': chart, 'label': chart_dict[chart]['name']} for chart in 
 
 app = dash.Dash(__name__)
 app.title = "NA Solomon raid statistic"
-#cache = Cache(app.server, config={
-#    'CACHE_TYPE': 'redis',
-#    'CACHE_REDIS_URL': 'localhost:6379'
-#})
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': 'localhost:6379'
+})
 app.config.suppress_callback_exceptions = True
-#timeout = 300
+timeout = 3600 #cache timeout in seconds
 server = app.server
 
 app.layout = html.Div(children=[
-    html.H1(children='NA Solomon raid statistic'),
-    html.Div(children='Boss:'),
-    dcc.Checklist(
-        id='boss_checklist',
-        options=dash_boss,
-        labelStyle={'display': 'inline-block'},
-        values=[b for b in boss_list if b != 'barbatos']
-    ),
-    dcc.RadioItems(
-        id='chart_value',
-        options=dash_chart,
-        labelStyle={'display': 'inline-block'},
-        value='kps'
-    ),
-    dcc.Graph(id='solomon_raid_graph', style={'height': '570px'})
+    html.H1(children='NA Solomon raid statistic', style={'textAlign': 'center'}),
+    html.Div(children=[
+        html.Div(children=[
+            html.Div(children='Boss:', style={'font-weight': 'bold', 'display': 'inline-block'}),
+            dcc.Checklist(
+                id='boss_checklist',
+                options=dash_boss,
+                labelStyle={'display': 'inline-block'},
+                values=[b for b in boss_list if b != 'barbatos'],
+                style={'display': 'inline-block', 'margin-left': '5px'}
+            )
+        ]),
+        html.Div(children=[
+            html.Div(children='Statistic:', style={'font-weight': 'bold', 'display': 'inline-block'}),
+            dcc.RadioItems(
+                id='chart_value',
+                options=dash_chart,
+                labelStyle={'display': 'inline-block'},
+                value='kps',
+                style={'display': 'inline-block', 'margin-left': '5px'}
+            )
+        ]),
+        dcc.Graph(id='solomon_raid_graph', style={'height': '75vh'})
+    ], style={'textAlign': 'center'})
 ]#, className="container"
 )
 
@@ -91,8 +100,12 @@ app.layout = html.Div(children=[
     [dash.dependencies.Input('boss_checklist', 'values'),
     dash.dependencies.Input('chart_value', 'value')]
 )
-#@cache.memoize(timeout=timeout)  # in seconds
+@cache.memoize(timeout=timeout)
 def update_graph(chosen_boss, chosen_chart):
+    if len(chosen_boss) == 1:
+        boss_title = boss_name[chosen_boss[0]]
+    else:
+        boss_title = 'Demon God Pillars'
     chart_list = []
     for boss in chosen_boss:
         time = boss_df[boss]['time']
@@ -105,7 +118,7 @@ def update_graph(chosen_boss, chosen_chart):
             )
         )
     layout = dict(
-        title = '{} - updated {} PST'.format(chart_dict[chosen_chart]['name'], update_time),
+        title = '{} {} - updated {} PST'.format(boss_title, chart_dict[chosen_chart]['name'], update_time),
         xaxis = dict(
             title = 'Pacific Standard Time',
             rangeselector=dict(

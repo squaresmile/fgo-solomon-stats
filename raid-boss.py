@@ -70,14 +70,15 @@ boss_interval = {
     'halphas': 8,
     'amon_ra': 8,
     'sabnock': 4,
-    'andromalius': 3,
-    'all_kps': 8,
-    'all_kps_except_barbatos': 8,
-    'all_kills_counts': 8
+    'andromalius': 8,
+    'all_kps': 12,
+    'all_kps_except_barbatos': 12,
+    'all_kills_counts': 12
 }
 
 h_fmt = mdates.DateFormatter('%m-%d %H')
 start_time = pd.to_datetime("2018-12-20 23:00")
+end_time = pd.to_datetime("2018-12-29 12:00")
 
 def hour_to_max(timestamp, interval):
     to_max = interval - ((timestamp.hour + 1) % interval) #+1 because start at 23:00
@@ -92,15 +93,15 @@ for boss in boss_df:
         idx = (y < 40) & (y > 0)
     else:
         idx = (y < 20) & (y > 0)
-    x = x[idx][9:]
+    x = x[idx]
     x = pd.to_datetime(x, unit='s') + pd.Timedelta('-08:00:00') #Change time to PST time
     y = y[idx]
-    y = y.rolling(10).mean()[9:] #Rolling average to smooth out
+    y = y.rolling(11, center=True).mean() #Rolling average to smooth out
 
-    z = boss_df[boss]["hp"][1:][idx][9:]
+    z = boss_df[boss]["hp"][1:][idx]
 
     data = {"time": x, "hp": z, "kps": y}
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame.from_dict(data).dropna()
     df.to_csv(base_img_path + boss + ".csv", index = False)
 
     plt.style.use('seaborn')
@@ -109,6 +110,9 @@ for boss in boss_df:
     
     if boss == 'andromalius':
         plt.ylim(bottom=0)
+        hour_interval = boss_interval[boss]
+        hours = mdates.HourLocator(interval = hour_interval)
+        ax.xaxis.set_major_locator(hours)
     else:
         hour_interval = boss_interval[boss]
         hours = mdates.HourLocator(interval = hour_interval)
@@ -152,8 +156,8 @@ def all_kps_plot(boss_dict, output_name, title):
     plt.title("{} - updated {} PST".format(title, str(update_time)))
     plt.xlabel("Pacific Standard Time (Month-Date Hour)")
     plt.ylabel("Kills per second")
-    max_time = hour_to_max(update_time, hour_interval)
-    ax.set_xlim(start_time, max_time)
+    #max_time = hour_to_max(update_time, hour_interval)
+    ax.set_xlim(start_time, end_time)
     fig.autofmt_xdate()
     plt.legend()
     plt.savefig(base_img_path + output_name + ".png", dpi=200, bbox_inches='tight')
@@ -186,8 +190,8 @@ def all_hp_plot(boss_dict, output_name, title):
     plt.title("{} - updated {} PST".format(title, str(update_time)))
     plt.xlabel("Pacific Standard Time (Month-Date Hour)")
     plt.ylabel("Kills count")
-    max_time = hour_to_max(update_time, hour_interval)
-    ax.set_xlim(start_time, max_time)
+    #max_time = hour_to_max(update_time, hour_interval)
+    ax.set_xlim(start_time, end_time)
     fig.autofmt_xdate()
     plt.legend()
     plt.savefig(base_img_path + output_name + ".png", dpi=200, bbox_inches='tight')
