@@ -52,7 +52,7 @@ chart_dict = {
 boss_df = {}
 for boss in boss_list:
     boss_df[boss] = pd.read_csv('output/{}.csv'.format(boss))
-update_time = pd.to_datetime(boss_df['andromalius']['time'].iloc[-1])
+#update_time = pd.to_datetime(boss_df['andromalius']['time'].iloc[-1])
 
 dash_boss = [{'value': boss_id, 'label': name} for boss_id, name in boss_name.items()]
 dash_chart = [{'value': chart, 'label': chart_dict[chart]['name']} for chart in chart_dict]
@@ -118,7 +118,7 @@ def update_graph(chosen_boss, chosen_chart):
             )
         )
     layout = dict(
-        title = '{} {} - updated {} PST'.format(boss_title, chart_dict[chosen_chart]['name'], update_time),
+        title = '{} {}'.format(boss_title, chart_dict[chosen_chart]['name']),
         xaxis = dict(
             title = 'Pacific Standard Time',
             rangeselector=dict(
