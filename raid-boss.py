@@ -30,6 +30,7 @@ df.columns = df.iloc[0] #First row as header
 df = df.reindex(df.index.drop(0))
 for col in ['percent', 'hp', 'time captured', 'time parsed']:
     df[col]= pd.to_numeric(df[col])
+df.to_csv(base_img_path + 'raw_data.csv', index=False)
 
 bosses = [boss for boss in list(df["id"].unique()) if not pd.isnull(boss) and boss != '']
 boss_df = {}
@@ -101,8 +102,8 @@ for boss in boss_df:
     z = boss_df[boss]["hp"][1:][idx]
 
     data = {"time": x, "hp": z, "kps": y}
-    df = pd.DataFrame.from_dict(data).dropna()
-    df.to_csv(base_img_path + boss + ".csv", index = False)
+    one_boss_df = pd.DataFrame.from_dict(data).dropna()
+    one_boss_df.to_csv(base_img_path + boss + ".csv", index = False)
 
     plt.style.use('seaborn')
     fig, ax = plt.subplots(figsize=(14, 7.5))

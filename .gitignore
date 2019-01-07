@@ -2,6 +2,5 @@
 Pipfile.lock
 rclone.json
 __pycache__/
-output/
 google-api.json
 imgur-api.json
