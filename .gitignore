@@ -4,3 +4,4 @@ rclone.json
 __pycache__/
 google-api.json
 imgur-api.json
+.ipynb_checkpoints/
