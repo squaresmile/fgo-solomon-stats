@@ -61,7 +61,7 @@ app = dash.Dash(__name__)
 app.title = "NA Solomon raid statistic"
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': 'localhost:6379'
+    'CACHE_REDIS_URL': 'redis://localhost:6379'
 })
 app.config.suppress_callback_exceptions = True
 timeout = 3600 #cache timeout in seconds
