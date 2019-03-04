@@ -68,8 +68,9 @@ timeout = 3600 #cache timeout in seconds
 server = app.server
 
 app.layout = html.Div(children=[
-    html.H1(children='NA Solomon raid statistic', style={'textAlign': 'center'}),
     html.Div(children=[
+        html.H1(children='NA Solomon raid statistic'),
+        html.A('Source data', href='https://atlasacademy.github.io/solomon/'),
         html.Div(children=[
             html.Div(children='Boss:', style={'font-weight': 'bold', 'display': 'inline-block'}),
             dcc.Checklist(
