@@ -59,7 +59,12 @@ dash_chart = [
     {"value": chart, "label": chart_dict[chart]["name"]} for chart in chart_dict
 ]
 
-app = dash.Dash(__name__, show_undo_redo=True, url_base_pathname="/solomon-stats/", meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
+app = dash.Dash(
+    __name__,
+    show_undo_redo=True,
+    url_base_pathname="/solomon-stats/",
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+)
 app.title = "NA Solomon raid statistic"
 cache = Cache(
     app.server,
