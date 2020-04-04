@@ -59,7 +59,7 @@ dash_chart = [
     {"value": chart, "label": chart_dict[chart]["name"]} for chart in chart_dict
 ]
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, show_undo_redo=True, url_base_pathname="/solomon-stats/", meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
 app.title = "NA Solomon raid statistic"
 cache = Cache(
     app.server,
@@ -73,7 +73,7 @@ app.layout = html.Div(
     children=[
         html.Div(
             children=[
-                html.H1(children="NA Solomon raid statistic"),
+                html.H2(children="NA Solomon raid statistic"),
                 html.A("Source data", href="https://atlasacademy.github.io/solomon/"),
                 html.Div(
                     children=[
@@ -85,7 +85,7 @@ app.layout = html.Div(
                             id="boss_checklist",
                             options=dash_boss,
                             labelStyle={"display": "inline-block"},
-                            values=[b for b in boss_list if b != "barbatos"],
+                            value=[b for b in boss_list if b != "barbatos"],
                             style={"display": "inline-block", "margin-left": "5px"},
                         ),
                     ]
@@ -116,7 +116,7 @@ app.layout = html.Div(
 @app.callback(
     dash.dependencies.Output("solomon_raid_graph", "figure"),
     [
-        dash.dependencies.Input("boss_checklist", "values"),
+        dash.dependencies.Input("boss_checklist", "value"),
         dash.dependencies.Input("chart_value", "value"),
     ],
 )
